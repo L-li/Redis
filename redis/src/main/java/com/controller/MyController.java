@@ -18,6 +18,11 @@ public class MyController {
     @Autowired
     private TaskJob taskJob;
 
+    /**
+     * 查询
+     * @param httpServletRequest
+     * @return
+     */
     @RequestMapping(value = "/find", produces = "application/json; charset=UTF-8")
     public @ResponseBody
     String find(HttpServletRequest httpServletRequest) {
