@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!--<task:scheduled-tasks>-->
+        <!--&lt;!&ndash; 每15秒清空一次缓存 &ndash;&gt;-->
+        <!--<task:scheduled ref="taskJob" method="printTaskJob" cron="0/30 * * * * ?"/>-->
+    <!--</task:scheduled-tasks>-->
+
+</beans>

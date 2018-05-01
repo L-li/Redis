@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 开启注解 -->
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.*"/>
+
+    <bean id="ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- WEB-INF 本身是无法直接访问的，但是springMVC这样配置之后就能直接访问了 -->
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/views/"/>
+        <property name="suffix" value=".html"/>
+    </bean>
+
+    <!--引入配置属性文件  -->
+    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="locations">
+            <array>
+                <value>classpath:properties/jdbc.properties</value>
+                <value>classpath:properties/redis.properties</value>
+            </array>
+        </property>
+    </bean>
+
+    <!-- mapping="拦截请求后缀" location="对应资源路径" -->
+    <mvc:default-servlet-handler/>
+    <mvc:resources mapping="/images/**" location="/views/images/"/>
+    <mvc:resources mapping="/fonts/**" location="/views/fonts/"/>
+    <mvc:resources mapping="/css/**" location="/views/css/"/>
+    <mvc:resources mapping="/js/**" location="/views/js/"/>
+
+</beans>

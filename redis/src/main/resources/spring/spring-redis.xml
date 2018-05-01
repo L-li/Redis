@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/cache
+       http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <!-- ====================== Redis配置, Spring Redis 缓存注解配置 ====================== -->
+    <!-- 最简单的理解就是: 将Redis缓存机制加入到Spring中使用 -->
+
+    <!-- 启用缓存注解功能，这个是必须的，否则注解不会生效，另外，该注解一定要声明在spring主配置文件中才会生效 -->
+    <cache:annotation-driven cache-manager="cacheManager"/>
+    <!-- Spring对于缓存只是提供了抽象的接口，并且通过接口来调用功能，没有具体的实现类，所以需要我们自己实现具体的操作。-->
+    <!-- 在上面配置中可知，每个实现类都会注入一个redisTemplate实例，我们就可以通过redisTemplate来操作redis-->
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <!-- 这里可以配置多个redis -->
+                <!-- <bean class="com.cn.util.RedisCache">
+                     <property name="redisTemplate" ref="redisTemplate" />
+                     <property name="name" value="default"/>
+                </bean> -->
+                <bean class="com.util.RedisCache">
+                    <property name="redisTemplate" ref="redisTemplate"/>
+                    <!--  缓存名: myStringCache 名称要在类或方法的注解中使用 -->
+                    <property name="name" value="myStringCache"/>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
+    <!-- redis 基本配置 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.pool.maxTotal}"/>
+        <property name="maxIdle" value="${redis.pool.maxIdle}"/>
+        <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}"/>
+    </bean>
+
+    <!-- redis单节点数据库连接配置,  类似数据库连接池  -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${redis.ip}"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="password" value="${redis.pass}"/>
+        <property name="timeout" value="${redis.timeout}"/>
+        <property name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+
+    <!-- redisTemplate配置，redisTemplate是对Jedis的对redis操作的扩展，有更多的操作，封装使操作更便捷 -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory"/>
+    </bean>
+
+
+</beans>

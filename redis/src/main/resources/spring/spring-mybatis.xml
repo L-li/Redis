@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd"
+>
+
+    <!--配置整合mybatis过程-->
+
+    <!--1、配置数据库相关参数-->
+    <!-- 这里选择 spring-mvc.xml 统一加载-->
+    <!--<context:property-placeholder location="classpath:properties/jdbc.properties" ignore-unresolvable="true"/>-->
+
+    <!--2.数据源druid -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="maxActive" value="${druid.pool.maxActive}"/>
+        <property name="initialSize" value="${druid.pool.initialSize}"/>
+        <property name="maxWait" value="${druid.pool.maxWait}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${druid.pool.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${druid.pool.minEvictableIdleTimeMillis}"/>
+        <property name="validationQuery" value="${druid.pool.validationQuery}"/>
+        <property name="testWhileIdle" value="${druid.pool.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${druid.pool.testOnBorrow}"/>
+        <property name="testOnReturn" value="${druid.pool.testOnReturn}"/>
+        <!-- 配置监控统计拦截的filters，wall用于防止sql注入，stat用于统计分析 -->
+        <!-- proxyFilters属性配置: 映射 慢sql 和 Log4jFilter(日志) 组合使用 -->
+        <property name="filters" value="${druid.pool.filters}"/>
+    </bean>
+
+
+    <!-- ====================== mybatis 映射配置 BEGIN ====================== -->
+    <!--3、配置SqlSessionFactory对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据库连接池-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置mybatis全局配置文件:mybatis-mybatis-config.xml-->
+        <property name="configLocation" value="classpath:properties/mybatis-global-config.xml"/>
+        <!--扫描sql配置文件:mapper需要的xml文件-->
+        <property name="mapperLocations" value="classpath*:mapper/UserMapper.xml"/>
+    </bean>
+
+    <!--4、配置扫描Dao接口包,动态实现DAO接口,注入到spring容器-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--注入SqlSessionFactory-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!-- 给出需要扫描的Dao接口-->
+        <property name="basePackage" value="com.dao"/>
+    </bean>
+    <!-- ====================== mybatis 映射配置 END ====================== -->
+
+
+    <!--配置事务管理器(mybatis采用的是JDBC的事务管理器)-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+</beans>
