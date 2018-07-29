@@ -1,9 +1,12 @@
 package com.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 
 // 注意这里一定要实现 Serializable, 否则无法序列化 User 类
+@Data
 public class User implements Serializable {
 
     private int id;
@@ -12,27 +15,4 @@ public class User implements Serializable {
 
     private Integer age;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 }
